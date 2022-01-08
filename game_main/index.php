@@ -11,9 +11,6 @@
   </body>
 </html>
 
-<?php
-  require "./commonClassload.php";
-?>
 <div id="ball" style="display:none"><?php echo $_POST['ball'] ?></div>
 <div id="difficulty" style="display:none"><?php echo $_POST['difficulty'] ?></div>
 <div id="score" style="display:none">0</div>
