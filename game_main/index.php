@@ -11,6 +11,7 @@
   </body>
 </html>
 
+<div id="HTTP_REFERER" style="display:none"><?php echo $_SERVER['HTTP_REFERER'] ?></div>
 <div id="ball" style="display:none"><?php echo $_POST['ball'] ?></div>
 <div id="difficulty" style="display:none"><?php echo $_POST['difficulty'] ?></div>
 <div id="score" style="display:none">0</div>

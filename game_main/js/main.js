@@ -19,7 +19,7 @@ const START_BALLS_NUM = 50;      // 開始時のボール数
 const UPDATE_FRAME = 10;
 
 // URL
-const HREF = "http://192.168.11.21:8080";
+const HREF = document.getElementById("HTTP_REFERER").innerText;
 
 const date = new Date();
 const Y = date.getFullYear();
