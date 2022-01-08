@@ -76,6 +76,8 @@ phina.define("SceneMain", {
         }
       } else if(now - this.start_time > 60) {
         //this.exit("Exit");
+        this.titleLabel.setPosition(SCREEN_WIDTH / 2, LABEL_FONT_SIZE*6);
+        this.titleLabel.text = "じかんぎれ～";
       }
     };
   },
@@ -252,9 +254,6 @@ phina.define("SceneMain", {
       this.targetball.anim.fit = false;
       this.targetball.anim.gotoAndPlay(this.targetNo);
       this.targetball.setPosition(SCREEN_WIDTH/2, BALL_WIDTH);
-    } else {
-      this.titleLabel.setPosition(SCREEN_WIDTH / 2, LABEL_FONT_SIZE*6);
-      this.titleLabel.text = "じかんぎれ～";
     }
   }
 });
