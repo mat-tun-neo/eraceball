@@ -19,6 +19,7 @@ phina.define("SceneMain", {
     // ラベル描画
     this.titleLabel;     // ボール残り数
     this.scoreLabel;     // スコア
+    this.timeOut;        // 時間切れ
     this.putTitle();
     this.putScore();
     // ボタン描画
@@ -74,10 +75,9 @@ phina.define("SceneMain", {
           document.getElementById("score").innerText = score + (60 - (now - this.start_time));
           this.exit("Main");
         }
-      } else if(now - this.start_time > 60) {
+      } else if (now - this.start_time > 60) {
         //this.exit("Exit");
-        this.titleLabel.setPosition(SCREEN_WIDTH / 2, LABEL_FONT_SIZE*6);
-        this.titleLabel.text = "じかんぎれ～";
+        this.timeOut.text = "じかんぎれ～";
       }
     };
   },
@@ -96,16 +96,26 @@ phina.define("SceneMain", {
   // タイトル描画
   putTitle: function() {
     console.log("SceneMainクラスputTitle");
-    // タイトルラベル
+    // ボール残り数ラベル
     if (this.titleLabel != null) {
       this.titleLabel.remove();
     }
     this.titleLabel = Label({text: ""}).addChildTo(this);
-    this.titleLabel.setPosition(SCREEN_WIDTH / 2, LABEL_FONT_SIZE*3.5);
+    this.titleLabel.setPosition(SCREEN_WIDTH / 2, LABEL_FONT_SIZE * 3.5);
     this.titleLabel.fontSize = LABEL_FONT_SIZE;
     this.titleLabel.fill = "white";
     this.titleLabel.stroke = "black";
     this.titleLabel.strokeWidth = 2;
+    // じかんぎれラベル
+    if (this.timeOut != null) {
+      this.timeOut.remove();
+    }
+    this.timeOut = Label({text: ""}).addChildTo(this);
+    this.timeOut.setPosition(SCREEN_WIDTH / 2, LABEL_FONT_SIZE * 7.5);
+    this.timeOut.fontSize = LABEL_FONT_SIZE * 1.5;
+    this.timeOut.fill = "white";
+    this.timeOut.stroke = "black";
+    this.timeOut.strokeWidth = 5;
   },
   // スコア描画
   putScore: function() {
