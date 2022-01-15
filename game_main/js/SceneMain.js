@@ -89,7 +89,7 @@ phina.define("SceneMain", {
     //console.log(this.xbutton.x + "/" + this.xbutton.y);
     // Xボタン押下時の処理
     this.xbutton.setInteractive(true);
-    this.xbutton.onclick = function() {
+    this.xbutton.onpointstart = function() {
       this.exit("Exit");
     }.bind(this);
   },
@@ -200,7 +200,7 @@ phina.define("SceneMain", {
     }).attachTo(ball);
     // ボール押下時の処理
     ball.setInteractive(true);
-    ball.onclick = function() {
+    ball.onpointstart = function() {
       // ターゲット中のボールのみ対象
       if (this.targetNo == ball.anim.name) {
         ball.remove();
