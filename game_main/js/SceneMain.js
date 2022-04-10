@@ -55,7 +55,8 @@ phina.define("SceneMain", {
     for (i=0; i<START_BALLS_NUM; i++) {
       this.drawBalls();
     }
-    this.drawTimer();
+    this.timercount = 0;
+    this.drawTimer(0);
     this.drawTarget();
   },
   // 画面更新
@@ -67,8 +68,9 @@ phina.define("SceneMain", {
       // ゲーム継続
       if (now - this.start_time < 61 ) {
         // タイマーの描画
-        if ((now - this.start_time) % 5 == 0) {
-          this.timer.anim.gotoAndPlay(zeroPadding(now - this.start_time, 2));
+        if (this.timercount != now - this.start_time) {
+          this.timercount = now - this.start_time;
+          this.drawTimer();
         }
         if (this.leftcnt == 0) {
           let score = Number(document.getElementById("score").innerText);
@@ -84,12 +86,13 @@ phina.define("SceneMain", {
   // Xボタン描画
   putXButton: function() {
     console.log("SceneMainクラスputXButton");
-    this.xbutton = Sprite("xbutton").addChildTo(this);
-    this.xbutton.setPosition(SCREEN_WIDTH - BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+    let xbutton = SpriteButtonX(
+      "000", SCREEN_WIDTH - BUTTON_SIZE * 3/5, BUTTON_SIZE / 2
+    ).addChildTo(this);
     //console.log(this.xbutton.x + "/" + this.xbutton.y);
     // Xボタン押下時の処理
-    this.xbutton.setInteractive(true);
-    this.xbutton.onpointstart = function() {
+    xbutton.sprite.setInteractive(true);
+    xbutton.sprite.onpointstart = function() {
       this.exit("Exit");
     }.bind(this);
   },
@@ -120,12 +123,19 @@ phina.define("SceneMain", {
   // スコア描画
   putScore: function() {
     console.log("SceneMainクラスputScore");
-    // スコアラベル
+    // とくてんラベル
+    let tokutenLabel = Label({text: "とくてん"}).addChildTo(this);
+    tokutenLabel.setPosition(LABEL_FONT_SIZE * 3, LABEL_FONT_SIZE * 2);
+    tokutenLabel.fontSize = LABEL_FONT_SIZE * 1;
+    tokutenLabel.fill = "white";
+    tokutenLabel.stroke = "black";
+    tokutenLabel.strokeWidth = 15;
+    // スコア数字ラベル
     if (this.scoreLabel != null) {
-      this.tiscoretle.remove();
+      this.scoreLabel.remove();
     }
     this.scoreLabel = Label({text: ""}).addChildTo(this);
-    this.scoreLabel.setPosition(LABEL_FONT_SIZE * 3, LABEL_FONT_SIZE * 2);
+    this.scoreLabel.setPosition(LABEL_FONT_SIZE * 3, LABEL_FONT_SIZE * 4);
     this.scoreLabel.fontSize = LABEL_FONT_SIZE * 2;
     this.scoreLabel.fill = "white";
     this.scoreLabel.stroke = "black";
@@ -138,7 +148,8 @@ phina.define("SceneMain", {
     // 床スプライト
     let floor = RectangleShape({
       width: SCREEN_WIDTH,
-      height: 32,
+      height: 10,
+      fill:"white",
     }).addChildTo(this);
     floor.setPosition(this.gridX.center(), this.gridY.span(16));
     // 床スプライトをBox2dレイヤーにアタッチ
@@ -152,13 +163,15 @@ phina.define("SceneMain", {
   drawWall: function() {
     // 左右壁スプライト
     let wall_left = RectangleShape({
-      width: 32,
+      width: 10,
       height: SCREEN_HEIGHT,
+      fill:"white",
     }).addChildTo(this);
     wall_left.setPosition(0, SCREEN_HEIGHT/2);
     let wall_right = RectangleShape({
-      width: 32,
+      width: 10,
       height: SCREEN_HEIGHT,
+      fill:"white",
     }).addChildTo(this);
     wall_right.setPosition(SCREEN_WIDTH, SCREEN_HEIGHT/2);
     // 左壁スプライトをBox2dレイヤーにアタッチ
@@ -212,19 +225,49 @@ phina.define("SceneMain", {
   // タイマー描画
   drawTimer: function() {
     console.log("SceneMainクラスdrawTimer");
+    // タイマーサークル
+    if (this.circle == null) {
+      this.circle = CircleShape().addChildTo(this);
+      this.circle.stroke = 'gray';
+      this.circle.fill = 'white';
+      this.circle.strokeWidth = 10;
+      this.circle.x = PADDING*2 + TIMER_CIRCLE/2;
+      this.circle.y = PADDING*18 + TIMER_CIRCLE/2;
+      this.circle.radius = TIMER_CIRCLE/2;
+    }
+
+    if (this.timercircle == null) {
+      this.timercircle = PathShape().addChildTo(this);
+      this.timercircle.strokeWidth = 15;
+    }
+    this.timercircle.clear();
+    if (this.timercount > 45) { 
+      this.timercircle.stroke = 'red';
+    } else if (this.timercount > 30) {
+      this.timercircle.stroke = 'orange';
+    } else if (this.timercount > 15) {
+      this.timercircle.stroke = 'yellowgreen';
+    } else {
+      this.timercircle.stroke = 'green';
+    }
+
+
+    (61-this.timercount).times((i) => {
+      let radian = (i*(-1) + 45) * 6 * Math.PI / 180;
+      let x = this.circle.x + Math.cos(radian) * TIMER_CIRCLE/2;
+      let y = this.circle.y + Math.sin(radian) * TIMER_CIRCLE/2;
+      this.timercircle.addPath(x, y);
+    });
+
     // タイマースプライト
-    this.timer = Sprite("timer").addChildTo(this);
-    this.timer.setImage("timer", TIMER_WIDTH, TIMER_HEIGHT);
-    this.timer.anim = FrameAnimation("timer").attachTo(this.timer);
-    this.timer.anim.fit = false;
-    this.timer.anim.gotoAndPlay("00");
-    this.timer.setPosition(this.gridX.center(), -100);
-    // タイマースプライトをBox2dレイヤーにアタッチ
-    let timer_body = this.layer.createBody({
-        type: 'dynamic',
-        shape: 'circle',
-    }).attachTo(this.timer);
-    timer_body.body.SetAngle(Math.degToRad(0));
+    if (this.timer == null) {
+      this.timer = Sprite("timer").addChildTo(this);
+      this.timer.setImage("timer", TIMER_WIDTH, TIMER_HEIGHT);
+      this.timer.anim = FrameAnimation("timer").attachTo(this.timer);
+      this.timer.anim.fit = false;
+      this.timer.setPosition(this.circle.x, this.circle.y);
+    }
+    this.timer.anim.gotoAndPlay(zeroPadding(this.timercount, 2));
   },
   // ターゲット描画
   drawTarget: function() {

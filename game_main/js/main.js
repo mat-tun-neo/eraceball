@@ -9,10 +9,12 @@ const TITLE_HEIGHT           = 100;
 const LABEL_FONT_SIZE        = 30;
 const BALL_WIDTH             = 100;
 const BALL_HEIGHT            = 100;
-const TIMER_WIDTH            = 150;
-const TIMER_HEIGHT           = 150;
+const TIMER_CIRCLE           = 150;
+const TIMER_WIDTH            = 120;
+const TIMER_HEIGHT           = 90;
 const START_BUTTON_WIDTH     = 150;
 const START_BUTTON_HEIGHT    = 135;
+const PADDING                = 10;
 
 // 各セッティング値
 const START_BALLS_NUM = 50;      // 開始時のボール数
@@ -35,30 +37,17 @@ const ASSETS = {
   // 画像
   image: {
     "mainwindow":      "./images/window.png" + datestr,
-    "timer":           "./images/timer.png" + datestr,
-    "xbutton":         "./images/xbutton.png" + datestr
+    "x_button":        "./images/xbutton.png" + datestr
   },
   // スプライトシート
   spritesheet: {
-    "timer":
+    "x_button":
     {
-      "frame": { "width": 90, "height": 90, "cols": 7, "rows": 2 },
+      "frame": { "width": 220, "height": 210, "cols": 1, "rows": 1 },
       "animations" : {
-        "00": {"frames": [12], "next": "00", "frequency": 1 },
-        "05": {"frames": [11], "next": "05", "frequency": 1 },
-        "10": {"frames": [10], "next": "10", "frequency": 1 },
-        "15": {"frames": [9],  "next": "15", "frequency": 1 },
-        "20": {"frames": [8],  "next": "20", "frequency": 1 },
-        "25": {"frames": [7],  "next": "25", "frequency": 1 },
-        "30": {"frames": [6],  "next": "30", "frequency": 1 },
-        "35": {"frames": [5],  "next": "35", "frequency": 1 },
-        "40": {"frames": [4],  "next": "40", "frequency": 1 },
-        "45": {"frames": [3],  "next": "45", "frequency": 1 },
-        "50": {"frames": [2],  "next": "50", "frequency": 1 },
-        "55": {"frames": [1],  "next": "55", "frequency": 1 },
-        "60": {"frames": [0],  "next": "60", "frequency": 1 }
+        "000": {"frames": [0] , "next": "000", "frequency": 1 }
       }
-    },
+    }
   }
 };
 
