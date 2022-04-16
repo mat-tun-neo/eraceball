@@ -12,13 +12,15 @@ const BALL_HEIGHT            = 100;
 const TIMER_CIRCLE           = 150;
 const TIMER_WIDTH            = 120;
 const TIMER_HEIGHT           = 90;
-const START_BUTTON_WIDTH     = 150;
-const START_BUTTON_HEIGHT    = 135;
+const CLEAR_BUTTON_WIDTH     = 500;
+const CLEAR_BUTTON_HEIGHT    = 120;
 const PADDING                = 10;
 
 // 各セッティング値
 const START_BALLS_NUM = 50;      // 開始時のボール数
 const UPDATE_FRAME = 10;
+var ROTATION_FLG = true;    // ボールの回転有無
+if (document.getElementById("rotationflg").innerText == 'false') ROTATION_FLG = false;
 
 // URL
 const HREF = document.getElementById("HTTP_REFERER").innerText;
@@ -37,6 +39,7 @@ const ASSETS = {
   // 画像
   image: {
     "mainwindow":      "./images/window.png" + datestr,
+    "clear_button":    "./images/clearbutton.png" + datestr,
     "x_button":        "./images/xbutton.png" + datestr
   },
   // スプライトシート
@@ -47,7 +50,15 @@ const ASSETS = {
       "animations" : {
         "000": {"frames": [0] , "next": "000", "frequency": 1 }
       }
-    }
+    },
+    "clear_button":
+    {
+      "frame": { "width": 400, "height": 100, "cols": 1, "rows": 4 },
+      "animations" : {
+        "000": {"frames": [0, 1] , "next": "000", "frequency": 30 },
+        "001": {"frames": [2, 3] , "next": "001", "frequency": 30 }
+      }
+    },
   }
 };
 
@@ -101,7 +112,7 @@ phina.define("SceneLoading", {
 
   init: function(options) {
     console.log("SceneLoadingクラスinit");
-    console.log("SceneLoadingクラスinit:ASSETS", ASSETS);
+    //console.log("SceneLoadingクラスinit:ASSETS", ASSETS);
     
     this.superInit({
       // アセット読み込み

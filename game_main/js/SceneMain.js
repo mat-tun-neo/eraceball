@@ -16,6 +16,7 @@ phina.define("SceneMain", {
     this.targetNo;                                           // ターゲットのスプライト番号
     this.leftcnt;                                            // ボール残り数
     this.start_time = Math.floor(Date.now()/1000);           // 開始時刻(sec)
+    this.clearflg = false;                                   // クリアフラグ
     // ラベル描画
     this.titleLabel;     // ボール残り数
     this.scoreLabel;     // スコア
@@ -31,7 +32,7 @@ phina.define("SceneMain", {
     }).addChildTo(this);
     // スプライト
     this.character = document.getElementById("ball").innerText;
-    console.log("this.character", this.character);
+    //console.log("this.character", this.character);
     this.floor;
     this.wall_right;
     this.wall_left;
@@ -40,18 +41,19 @@ phina.define("SceneMain", {
     // スプライトシート削除（難易度調整）
     this.keys = Object.keys(ASSETS.spritesheet[this.character].animations);
     let delcnt = this.keys.length - document.getElementById("difficulty").innerText;
-    console.log("delcnt", delcnt);
+    //console.log("delcnt", delcnt);
     for (i = 0; i < delcnt; i++) {
       let arrayno = Math.floor(Math.random()*this.keys.length);
       this.keys.splice(arrayno, 1);
     }
     // スプライトグループ
     this.ballSprites = DisplayElement().addChildTo(this);
+    this.buttonSprites = DisplayElement().addChildTo(this);
     // 開始時のスプライト描画
     this.drawFloor();
     this.drawWall();
-    console.log("this.targetNo", this.targetNo);
-    console.log("this.keys", this.keys);
+    //console.log("this.targetNo", this.targetNo);
+    //console.log("this.keys", this.keys);
     for (i=0; i<START_BALLS_NUM; i++) {
       this.drawBalls();
     }
@@ -62,24 +64,42 @@ phina.define("SceneMain", {
   // 画面更新
   update: function(app) {
     // プレイヤー更新
-    if (app.frame % UPDATE_FRAME == 0) {
+    if (app.frame % UPDATE_FRAME == 0 && this.clearflg == false) {
       let now = Math.floor(Date.now()/1000);
-      console.log("now - this.start_time：", now - this.start_time);
+      let animation = "000";
+      //console.log("now - this.start_time：", now - this.start_time);
       // ゲーム継続
-      if (now - this.start_time < 61 ) {
+      if (now - this.start_time < 61) {
         // タイマーの描画
         if (this.timercount != now - this.start_time) {
           this.timercount = now - this.start_time;
           this.drawTimer();
         }
         if (this.leftcnt == 0) {
-          let score = Number(document.getElementById("score").innerText);
-          document.getElementById("score").innerText = score + (60 - (now - this.start_time));
-          this.exit("Main");
+          let score = Number(document.getElementById("score").innerText) + (60 - (now - this.start_time));
+          document.getElementById("score").innerText = score;
+          this.scoreLabel.text = zeroPadding(score, 3);
+          this.clearflg = true;
         }
       } else if (now - this.start_time > 60) {
-        //this.exit("Exit");
+        this.clearflg = true;
         this.timeOut.text = "じかんぎれ～";
+        animation = "001";
+      }
+      // クリア／ゲームオーバーボタン
+      if (this.clearflg) {
+        let clearbutton = SpriteButtonClear(
+          animation, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
+        ).addChildTo(this.buttonSprites);
+        // クリアボタン押下時の処理
+        clearbutton.sprite.setInteractive(true);
+        clearbutton.sprite.onpointstart = function() {
+          console.log("clearbutton.onpointstart");
+          clearbutton.removeSprite();
+          // 再スタート
+          clearbutton.removeSprite();
+          this.exit("Main");
+        }.bind(this);
       }
     };
   },
@@ -195,7 +215,7 @@ phina.define("SceneMain", {
     let size = Math.floor(Math.random()*BALL_WIDTH/2)+50;
     let arrayno = Math.floor(Math.random()*this.keys.length);
     let animations_no = this.keys[arrayno];
-    console.log("arrayno/animations_no", arrayno, animations_no);
+    //console.log("arrayno/animations_no", arrayno, animations_no);
     ball.setImage(this.character, size, size);
     ball.anim = FrameAnimation(this.character).attachTo(ball);
     ball.anim.fit = false;
@@ -204,12 +224,13 @@ phina.define("SceneMain", {
     // ターゲット初期設定
     if (this.targetNo == null) {
       this.targetNo = animations_no;
-      console.log("this.target", this.targetNo);
+      //console.log("this.target", this.targetNo);
     }
     // ボールスプライトをBox2dレイヤーにアタッチ
     let ballbody = this.layer.createBody({
       type: 'dynamic', 
       shape: 'circle',
+      rotationflg: ROTATION_FLG,
     }).attachTo(ball);
     // ボール押下時の処理
     ball.setInteractive(true);
@@ -222,9 +243,10 @@ phina.define("SceneMain", {
       }
     }.bind(this);
   },
+
   // タイマー描画
   drawTimer: function() {
-    console.log("SceneMainクラスdrawTimer");
+    //console.log("SceneMainクラスdrawTimer");
     // タイマーサークル
     if (this.circle == null) {
       this.circle = CircleShape().addChildTo(this);
@@ -235,7 +257,6 @@ phina.define("SceneMain", {
       this.circle.y = PADDING*18 + TIMER_CIRCLE/2;
       this.circle.radius = TIMER_CIRCLE/2;
     }
-
     if (this.timercircle == null) {
       this.timercircle = PathShape().addChildTo(this);
       this.timercircle.strokeWidth = 15;
@@ -250,15 +271,12 @@ phina.define("SceneMain", {
     } else {
       this.timercircle.stroke = 'green';
     }
-
-
     (61-this.timercount).times((i) => {
       let radian = (i*(-1) + 45) * 6 * Math.PI / 180;
       let x = this.circle.x + Math.cos(radian) * TIMER_CIRCLE/2;
       let y = this.circle.y + Math.sin(radian) * TIMER_CIRCLE/2;
       this.timercircle.addPath(x, y);
     });
-
     // タイマースプライト
     if (this.timer == null) {
       this.timer = Sprite("timer").addChildTo(this);
@@ -276,7 +294,7 @@ phina.define("SceneMain", {
     this.leftcnt = 0;
     for (i=0; i<this.ballSprites.children.length; i++) {
       if (this.targetNo == this.ballSprites.children[i].anim.name) {
-        console.log("this.ballSprites.children[i].anim.name", i, this.ballSprites.children[i].anim.name);
+        //console.log("this.ballSprites.children[i].anim.name", i, this.ballSprites.children[i].anim.name);
         this.leftcnt++;
       }
     }

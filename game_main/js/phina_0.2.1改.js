@@ -15009,6 +15009,11 @@ phina.namespace(function() {
       this.type = params.type;
       this.shape = params.shape;
 
+      this.rotationflg = true;
+      if (params.rotationflg != null) {
+        this.rotationflg = params.rotationflg;
+      }
+
       this._init();
 
       this.on('attached', function() {
@@ -15027,7 +15032,9 @@ phina.namespace(function() {
 
       target.x = this.body.GetPosition().x * this.world._scale;
       target.y = this.body.GetPosition().y * this.world._scale;
-      target.rotation = this.body.GetAngle() * 180/Math.PI;
+      if (this.rotationflg) {
+        target.rotation = this.body.GetAngle() * 180/Math.PI;
+      }
     },
 
     remove: function() {

@@ -74,7 +74,5 @@ phina.define("SpriteBase", {
   // スプライト消去
   removeSprite: function() {
     this.sprite.remove();
-    this.nameLabel.remove();
-    this.hintLabel.remove();
   },
 });

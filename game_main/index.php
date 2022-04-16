@@ -19,6 +19,7 @@
 <div id="HTTP_REFERER" style="display:none"><?php echo $_SERVER['HTTP_REFERER'] ?></div>
 <div id="ball" style="display:none"><?php echo $postchk->getPostValue('ball') ?></div>
 <div id="difficulty" style="display:none"><?php echo $postchk->getPostValue('difficulty') ?></div>
+<div id="rotationflg" style="display:none"><?php echo $postchk->getPostValue('rotationflg') ?></div>
 <div id="score" style="display:none">0</div>
 
 <script src="./js/Box2d.js?<?php echo date('YmdHis') ?>"></script>
@@ -27,6 +28,7 @@
 <script src="./js/SceneMain.js?<?php echo date('YmdHis') ?>"></script>
 <script src="./js/SceneExit.js?<?php echo date('YmdHis') ?>"></script>
 <script src="./js/SpriteBase.js?<?php echo date('YmdHis') ?>"></script>
+<script src="./js/SpriteButtonClear.js?<?php echo date('YmdHis') ?>"></script>
 <script src="./js/SpriteButtonX.js?<?php echo date('YmdHis') ?>"></script>
 <script src="./js/spritesheet/timer.ss?<?php echo date('YmdHis') ?>"></script>
 <script src="./js/spritesheet/<?php echo $postchk->getPostValue('ball') ?>.ss?<?php echo date('YmdHis') ?>"></script>
