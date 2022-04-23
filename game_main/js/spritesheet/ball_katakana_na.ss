@@ -1,7 +1,7 @@
 ASSETS.image["ball_katakana_na"] = "./images/ball_katakana.png" + datestr;
 ASSETS.spritesheet["ball_katakana_na"] = 
 {
-  "frame": { "width": 450, "height": 450, "cols": 5, "rows": 10 },
+  "frame": { "width": 275, "height": 270, "cols": 5, "rows": 10 },
   "animations" : {
     "020": {"frames": [20], "next": "020", "frequency": 1, "name": "" , "color": "black" },
     "021": {"frames": [21], "next": "021", "frequency": 1, "name": "" , "color": "black" },
